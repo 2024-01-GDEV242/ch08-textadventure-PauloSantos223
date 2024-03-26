@@ -1,72 +1,68 @@
+import java.util.Arrays;
+
 /**
- * This class is part of the "World of Zuul" application. 
- * "World of Zuul" is a very simple, text based adventure game.  
- *
- * This class holds information about a command that was issued by the user.
- * A command currently consists of two parts: a CommandWord and a string
- * (for example, if the command was "take map", then the two parts
- * are TAKE and "map").
- * 
- * The way this is used is: Commands are already checked for being valid
- * command words. If the user entered an invalid command (a word that is not
- * known) then the CommandWord is UNKNOWN.
- *
- * If the command had only one word, then the second word is <null>.
- * 
- * @author  Michael Kölling and David J. Barnes
- * @version 2016.02.29
+ * This class handles user commands.
  */
-
-public class Command
-{
-    private CommandWord commandWord;
-    private String secondWord;
+public class Command {
+    private static final String[] MOVEMENT_COMMANDS = {"go", "move", "north", "south", "east", "west"};
 
     /**
-     * Create a command object. First and second words must be supplied, but
-     * the second may be null.
-     * @param commandWord The CommandWord. UNKNOWN if the command word
-     *                  was not recognised.
-     * @param secondWord The second word of the command. May be null.
+     * Executes the given command.
+     * @param command The command to execute.
+     * @param player The player object to manipulate based on the command.
+     * @throws IllegalArgumentException if the command is invalid.
      */
-    public Command(CommandWord commandWord, String secondWord)
-    {
-        this.commandWord = commandWord;
-        this.secondWord = secondWord;
+    public void execute(String command, Player player) throws IllegalArgumentException {
+        String[] tokens = command.toLowerCase().split(" ");
+        if (Arrays.asList(MOVEMENT_COMMANDS).contains(tokens[0])) {
+            if (tokens.length == 1) {
+                throw new IllegalArgumentException("Specify a direction to move.");
+            }
+            String direction = tokens[1];
+            switch (direction) {
+                case "north":
+                    player.moveNorth();
+                    break;
+                case "south":
+                    player.moveSouth();
+                    break;
+                case "east":
+                    player.moveEast();
+                    break;
+                case "west":
+                    player.moveWest();
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid direction.");
+            }
+        } else {
+            switch (tokens[0]) {
+                case "look":
+                    System.out.println("You look around the room.");
+                    break;
+                case "inventory":
+                    System.out.println("Inventory: " + player.getInventory());
+                    break;
+                case "help":
+                    displayAvailableCommands();
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid command.");
+            }
+        }
     }
 
     /**
-     * Return the command word (the first word) of this command.
-     * @return The command word.
+     * Displays all available commands to the user.
      */
-    public CommandWord getCommandWord()
-    {
-        return commandWord;
-    }
-
-    /**
-     * @return The second word of this command. Returns null if there was no
-     * second word.
-     */
-    public String getSecondWord()
-    {
-        return secondWord;
-    }
-
-    /**
-     * @return true if this command was not understood.
-     */
-    public boolean isUnknown()
-    {
-        return (commandWord == CommandWord.UNKNOWN);
-    }
-
-    /**
-     * @return true if the command has a second word.
-     */
-    public boolean hasSecondWord()
-    {
-        return (secondWord != null);
+    private void displayAvailableCommands() {
+        System.out.println("Available commands:");
+        for (String cmd : MOVEMENT_COMMANDS) {
+            System.out.println(cmd);
+        }
+        System.out.println("look");
+        System.out.println("inventory");
+        System.out.println("help");
     }
 }
 
