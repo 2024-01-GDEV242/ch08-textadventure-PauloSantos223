@@ -1,0 +1,3 @@
+Elements for Extra Credit level: Items, Player can pick up various items. Player also has an inventory and a weight system that should work.
+
+Elements for A: Time limit, health system, charged transporter.
